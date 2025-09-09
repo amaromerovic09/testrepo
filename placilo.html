@@ -31,23 +31,32 @@
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
 <script>
-    // Proper Paddle setup
-    Paddle.Setup({
-        token: "test_bd73c326ac973e27f2bc8fd2c29"
-    });
+  // Paddle setup for sandbox/test mode
+  Paddle.Setup({
+      token: "test_bd73c326ac973e27f2bc8fd2c29", // your test token
+      debug: true // enables console logs for easier debugging
+  });
 
-    // Checkout function
-    function openCheckout() {
-        Paddle.Checkout.open({
-            items: [
-                {
-                    priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc",
-                    quantity: 1
-                }
-            ]
-        });
-    }
+  // Function to open the Paddle checkout
+  function openCheckout() {
+      Paddle.Checkout.open({
+          url: "https://sandbox-pay.paddle.io/hsc_01k4q20dbp8j6n9ek1mmaq0zzc_3hpt9zearcx5sy5bgemwgsdf8setjnv0",
+          successCallback: function(data) {
+              console.log("Checkout successful!", data);
+              alert("Payment successful!"); // optional confirmation
+          },
+          closeCallback: function() {
+              console.log("Checkout closed by user");
+          }
+      });
+  }
+
+  // Optional: sanity check that Paddle loaded
+  if (typeof Paddle === "undefined") {
+      console.error("Paddle script did not load!");
+  }
 </script>
+
 
 </body>
 </html>
