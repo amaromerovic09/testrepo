@@ -1,72 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <meta http-equiv="Content-Security-Policy" content="
-  frame-src 'self' https://checkout.paddle.com https://buy.paddle.com;
-  script-src 'self' https://cdn.paddle.com;
-  connect-src 'self' https://checkout-service.paddle.com https://vendors.paddle.com;
-">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  
+  <!-- ✅ Single CSP definition -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    frame-src 'self' https://checkout.paddle.com https://buy.paddle.com;
+    script-src 'self' https://cdn.paddle.com;
+    connect-src 'self' https://checkout-service.paddle.com https://vendors.paddle.com;
+    img-src 'self' data:;
+  ">
 
-<meta http-equiv="Content-Security-Policy" 
-      content="frame-src 'self' https://checkout.paddle.com https://buy.paddle.com;
-               script-src 'self' https://cdn.paddle.com 'unsafe-inline';
-               connect-src 'self' https://checkout-service.paddle.com https://vendors.paddle.com;">
-
-    <title>Plačilo</title>
+  <title>Plačilo</title>
 </head>
 <body>
   
-<h1 class="w3-center" style="font-size: 40px; font-weight: bold;">PLAČILO</h1>
+  <h1 class="w3-center" style="font-size: 40px; font-weight: bold;">PLAČILO</h1>
 
-
- <div class="w3-card-4 w3-dark-grey w3-round-large" style="width: 400px; height: 250px; margin: 0 auto;">
+  <div class="w3-card-4 w3-dark-grey w3-round-large" style="width: 400px; height: 250px; margin: 0 auto;">
 
     <div class="w3-container w3-center">
       <h4 style="margin-top: 20px;">MESEČNA NAROČNINA</h4>
-      
       <h1>30 EUR / MESEC</h1>
 
       <div class="w3-section">
-        <button class="w3-button w3-green w3-round-large" onclick="openCheckout()">NADALJUJ</button>
+        <!-- ✅ removed inline onclick -->
+        <button id="checkoutBtn" class="w3-button w3-green w3-round-large">NADALJUJ</button>
       </div>
     </div>
 
-<img src="logogt.png">
+    <!-- ✅ make sure this image exists at root or adjust path -->
+    <img src="./logogt.png" alt="Logo">
+  </div>
 
-</div>
+  <!-- ✅ external Paddle script -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+  <script>
+    // Paddle setup for sandbox/test mode
+    Paddle.Setup({
+        token: "test_bd73c326ac973e27f2bc8fd2c29", // your test token
+        debug: true // enables console logs for easier debugging
+    });
 
-<script>
-  // Paddle setup for sandbox/test mode
-  Paddle.Setup({
-      token: "test_bd73c326ac973e27f2bc8fd2c29", // your test token
-      debug: true // enables console logs for easier debugging
-  });
+    // Function to open the Paddle checkout
+    function openCheckout() {
+        Paddle.Checkout.open({
+            url: "https://sandbox-pay.paddle.io/hsc_01k4q20dbp8j6n9ek1mmaq0zzc_3hpt9zearcx5sy5bgemwgsdf8setjnv0",
+            successCallback: function(data) {
+                console.log("Checkout successful!", data);
+                alert("Payment successful!"); // optional confirmation
+            },
+            closeCallback: function() {
+                console.log("Checkout closed by user");
+            }
+        });
+    }
 
-  // Function to open the Paddle checkout
-  function openCheckout() {
-      Paddle.Checkout.open({
-          url: "https://sandbox-pay.paddle.io/hsc_01k4q20dbp8j6n9ek1mmaq0zzc_3hpt9zearcx5sy5bgemwgsdf8setjnv0",
-          successCallback: function(data) {
-              console.log("Checkout successful!", data);
-              alert("Payment successful!"); // optional confirmation
-          },
-          closeCallback: function() {
-              console.log("Checkout closed by user");
-          }
-      });
-  }
+    // ✅ bind button with JS, not inline
+    document.getElementById("checkoutBtn").addEventListener("click", openCheckout);
 
-  // Optional: sanity check that Paddle loaded
-  if (typeof Paddle === "undefined") {
-      console.error("Paddle script did not load!");
-  }
-</script>
-
+    // Optional: sanity check
+    if (typeof Paddle === "undefined") {
+        console.error("Paddle script did not load!");
+    }
+  </script>
 
 </body>
 </html>
