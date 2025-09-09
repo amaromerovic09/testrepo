@@ -12,7 +12,9 @@
 
     function openCheckout() {
       Paddle.Checkout.open({
-        url: "https://sandbox-pay.paddle.io/hsc_01k4q20dbp8j6n9ek1mmaq0zzc_3hpt9zearcx5sy5bgemwgsdf8setjnv0",
+        items: [
+          { priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc" } // <-- replace with your real Paddle Price ID
+        ],
         successCallback: function(data) {
           console.log("Checkout successful!", data);
           alert("Payment successful!");
