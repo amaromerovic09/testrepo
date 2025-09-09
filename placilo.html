@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <title>Plačilo</title>
+</head>
+<body>
+  
+<h1 class="w3-center" style="font-size: 40px; font-weight: bold;">PLAČILO</h1>
+
+
+ <div class="w3-card-4 w3-dark-grey w3-round-large" style="width: 400px; height: 250px; margin: 0 auto;">
+
+    <div class="w3-container w3-center">
+      <h4 style="margin-top: 20px;">MESEČNA NAROČNINA</h4>
+      
+      <h1>30 EUR / MESEC</h1>
+
+      <div class="w3-section">
+        <button class="w3-button w3-green w3-round-large" onclick="openCheckout(itemsList)">NADALJUJ</button>
+      </div>
+    </div>
+
+<img src="logogt.png">
+
+</div>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script type="text/javascript">
+  Paddle.Environment.set("sandbox");
+  Paddle.Initialize({
+    token: "test_bd73c326ac973e27f2bc8fd2c29" // replace with a client-side token
+  });
+  
+  // define items
+  let itemsList = [
+    {
+      priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc",
+      quantity: 1
+    }
+  ];
+  
+  // open checkout
+  function openCheckout(items){
+    Paddle.Checkout.open({
+      items: items
+    });
+  }
+</script>
+
+</body>
+</html>
