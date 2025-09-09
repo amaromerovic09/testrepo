@@ -3,78 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Buy — Paddle Checkout</title>
+  <title>Buy — Paddle Checkout (Default Link)</title>
   <style>
-    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
-    html,body{height:100%;margin:0}
-    .wrap{height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f7fbff,#eef6ff)}
-    button#buyBtn{background:#0b63d6;color:#fff;border:0;padding:16px 26px;border-radius:12px;font-size:18px;cursor:pointer;box-shadow:0 6px 18px rgba(11,99,214,.18)}
-    button#buyBtn:active{transform:translateY(1px)}
-    .hint{margin-top:14px;font-size:13px;color:#334155;text-align:center}
-    .container{text-align:center}
+    body{display:flex;align-items:center;justify-content:center;height:100vh;margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:#f3f6fb}
+    button{padding:16px 26px;font-size:18px;border-radius:12px;border:0;background:#0b63d6;color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(11,99,214,.18)}
+    button:active{transform:translateY(1px)}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="container">
-      <button id="buyBtn" aria-label="Buy">Buy now</button>
-      <div class="hint">This page will open a Paddle checkout for a single price ID.</div>
-    </div>
-  </div>
+  <button id="buyBtn">Buy Now</button>
 
-  <!-- Paddle.js from official CDN -->
+  <!-- Paddle.js -->
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-
   <script>
-    // ====== CONFIG: Replace these with the values you will provide ======
-    // You said you'll give: a client-side token (client-side id) and a price id.
-    // Put them here (keep the token visible in the frontend; this is expected).
-    const PADDLE_CLIENT_TOKEN = 'test_bd73c326ac973e27f2bc8fd2c29'; // e.g. test_... or live_...
-    const PADDLE_PRICE_ID = 'pri_01k4pmpsgn1r69x96c9za5nmbc	'; // e.g. pri_01abcd...
+    // ===== Replace with your client-side token =====
+    const PADDLE_CLIENT_TOKEN = 'REPLACE_WITH_CLIENT_SIDE_TOKEN';
 
-    // ====== Auto-environment: if your client token begins with "test_" we'll set sandbox ======
-    try {
-      if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.includes('REPLACE_WITH')) {
-        console.warn('Please replace PADDLE_CLIENT_TOKEN and PADDLE_PRICE_ID with real values from your Paddle dashboard.');
-      }
+    // Initialize Paddle
+    Paddle.Environment.set('sandbox'); // remove this line if using live token
+    Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
 
-      if (typeof Paddle !== 'undefined') {
-        // If the token looks like a sandbox token, use the sandbox environment.
-        if (PADDLE_CLIENT_TOKEN.startsWith('test_')) {
-          Paddle.Environment.set('sandbox');
-        }
-
-        // Initialize Paddle.js with the client-side token (this is required).
-        Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
-      } else {
-        console.error('Paddle.js failed to load. Is https://cdn.paddle.com reachable?');
-      }
-    } catch (err) {
-      console.error('Paddle init error', err);
-    }
-
-    // ====== Checkout handler ======
-    function openCheckout() {
-      if (!PADDLE_PRICE_ID || PADDLE_PRICE_ID.includes('REPLACE_WITH')) {
-        alert('Please set the PADDLE_PRICE_ID in the script first.');
-        return;
-      }
-
-      // Open overlay checkout for the single price id and quantity 1
-      Paddle.Checkout.open({
-        items: [ { priceId: PADDLE_PRICE_ID, quantity: 1 } ],
-        settings: {
-          displayMode: 'overlay',
-          theme: 'light'
-          // You can set successUrl here if you want to redirect after purchase:
-          // successUrl: 'https://your-site.com/thank-you'
-        }
-      });
-    }
-
-    // attach to the button
-    document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('buyBtn').addEventListener('click', openCheckout);
+    document.getElementById('buyBtn').addEventListener('click', () => {
+      // Open checkout using Default Payment Link (no product/priceId needed)
+      Paddle.Checkout.open();
     });
   </script>
 </body>
