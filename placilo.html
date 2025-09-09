@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <meta http-equiv="Content-Security-Policy" content="frame-src 'self' https://checkout.paddle.com https://buy.paddle.com;">
+    <meta http-equiv="Content-Security-Policy" content="
+  frame-src 'self' https://checkout.paddle.com https://buy.paddle.com;
+  script-src 'self' https://cdn.paddle.com;
+  connect-src 'self' https://checkout-service.paddle.com https://vendors.paddle.com;
+">
     <title>Plačilo</title>
 </head>
 <body>
