@@ -28,13 +28,14 @@
 </div>
 
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-    <script>
-     // Initialize Paddle with your token
+
+<script>
+    // Proper Paddle setup
     Paddle.Setup({
         token: "test_bd73c326ac973e27f2bc8fd2c29"
     });
 
-    // Function to open the checkout
+    // Checkout function
     function openCheckout() {
         Paddle.Checkout.open({
             items: [
@@ -45,6 +46,7 @@
             ]
         });
     }
-    </script>
+</script>
+
 </body>
 </html>
