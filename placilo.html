@@ -29,25 +29,46 @@
 
 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 <script type="text/javascript">
-  Paddle.Environment.set("sandbox");
-  Paddle.Initialize({
-    token: "test_bd73c326ac973e27f2bc8fd2c29" // replace with a client-side token
-  });
-  
-  // define items
-  let itemsList = [
-    {
-      priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc",
-      quantity: 1
+(function(){
+  const CLIENT_TOKEN = "test_bd73c326ac973e27f2bc8fd2c29";
+  const ITEMS_LIST = [{ priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc", quantity: 1 }];
+  window.itemsList = ITEMS_LIST;
+
+  var checkoutBtn = document.querySelector('button[onclick*="openCheckout"]') || document.querySelector('.w3-button.w3-green');
+  if (checkoutBtn) checkoutBtn.disabled = true;
+
+  function initPaddle(){
+    try {
+      if (!window.Paddle) throw new Error("Paddle missing");
+      if (Paddle.Environment) Paddle.Environment.set("sandbox");
+      Paddle.Initialize({ token: CLIENT_TOKEN });
+      if (checkoutBtn) checkoutBtn.disabled = false;
+    } catch (e) {
+      if (checkoutBtn) checkoutBtn.disabled = false;
+      console.error(e);
     }
-  ];
-  
-  // open checkout
-  function openCheckout(items){
-    Paddle.Checkout.open({
-      items: items
-    });
   }
+
+  if (window.Paddle && window.Paddle.Checkout && typeof Paddle.Checkout.open === "function") {
+    initPaddle();
+  } else {
+    var s = document.createElement("script");
+    s.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    s.async = true;
+    s.onload = initPaddle;
+    s.onerror = function(){ if (checkoutBtn) checkoutBtn.disabled = false; console.error("Failed to load Paddle"); };
+    document.head.appendChild(s);
+  }
+
+  window.openCheckout = function(items){
+    if (!window.Paddle || !Paddle.Checkout || typeof Paddle.Checkout.open !== "function") {
+      alert("Plačilna storitev še ni pripravljena — poskusite ponovno.");
+      return;
+    }
+    Paddle.Checkout.open({ items: items });
+  };
+})();
+
 </script>
 
 </body>
