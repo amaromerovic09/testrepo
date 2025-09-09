@@ -1,75 +1,81 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <title>Plačilo</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Buy — Paddle Checkout</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+    html,body{height:100%;margin:0}
+    .wrap{height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f7fbff,#eef6ff)}
+    button#buyBtn{background:#0b63d6;color:#fff;border:0;padding:16px 26px;border-radius:12px;font-size:18px;cursor:pointer;box-shadow:0 6px 18px rgba(11,99,214,.18)}
+    button#buyBtn:active{transform:translateY(1px)}
+    .hint{margin-top:14px;font-size:13px;color:#334155;text-align:center}
+    .container{text-align:center}
+  </style>
 </head>
 <body>
-  
-<h1 class="w3-center" style="font-size: 40px; font-weight: bold;">PLAČILO</h1>
-
-
- <div class="w3-card-4 w3-dark-grey w3-round-large" style="width: 400px; height: 250px; margin: 0 auto;">
-
-    <div class="w3-container w3-center">
-      <h4 style="margin-top: 20px;">MESEČNA NAROČNINA</h4>
-      
-      <h1>30 EUR / MESEC</h1>
-
-      <div class="w3-section">
-        <button class="w3-button w3-green w3-round-large" onclick="openCheckout(itemsList)">NADALJUJ</button>
-      </div>
+  <div class="wrap">
+    <div class="container">
+      <button id="buyBtn" aria-label="Buy">Buy now</button>
+      <div class="hint">This page will open a Paddle checkout for a single price ID.</div>
     </div>
+  </div>
 
-<img src="logogt.png">
+  <!-- Paddle.js from official CDN -->
+  <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
 
-</div>
+  <script>
+    // ====== CONFIG: Replace these with the values you will provide ======
+    // You said you'll give: a client-side token (client-side id) and a price id.
+    // Put them here (keep the token visible in the frontend; this is expected).
+    const PADDLE_CLIENT_TOKEN = 'test_bd73c326ac973e27f2bc8fd2c29'; // e.g. test_... or live_...
+    const PADDLE_PRICE_ID = 'pri_01k4pmpsgn1r69x96c9za5nmbc	'; // e.g. pri_01abcd...
 
-<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-<script type="text/javascript">
-(function(){
-  const CLIENT_TOKEN = "test_bd73c326ac973e27f2bc8fd2c29";
-  const ITEMS_LIST = [{ priceId: "pri_01k4pmpsgn1r69x96c9za5nmbc", quantity: 1 }];
-  window.itemsList = ITEMS_LIST;
-
-  var checkoutBtn = document.querySelector('button[onclick*="openCheckout"]') || document.querySelector('.w3-button.w3-green');
-  if (checkoutBtn) checkoutBtn.disabled = true;
-
-  function initPaddle(){
+    // ====== Auto-environment: if your client token begins with "test_" we'll set sandbox ======
     try {
-      if (!window.Paddle) throw new Error("Paddle missing");
-      if (Paddle.Environment) Paddle.Environment.set("sandbox");
-      Paddle.Initialize({ token: CLIENT_TOKEN });
-      if (checkoutBtn) checkoutBtn.disabled = false;
-    } catch (e) {
-      if (checkoutBtn) checkoutBtn.disabled = false;
-      console.error(e);
+      if (!PADDLE_CLIENT_TOKEN || PADDLE_CLIENT_TOKEN.includes('REPLACE_WITH')) {
+        console.warn('Please replace PADDLE_CLIENT_TOKEN and PADDLE_PRICE_ID with real values from your Paddle dashboard.');
+      }
+
+      if (typeof Paddle !== 'undefined') {
+        // If the token looks like a sandbox token, use the sandbox environment.
+        if (PADDLE_CLIENT_TOKEN.startsWith('test_')) {
+          Paddle.Environment.set('sandbox');
+        }
+
+        // Initialize Paddle.js with the client-side token (this is required).
+        Paddle.Initialize({ token: PADDLE_CLIENT_TOKEN });
+      } else {
+        console.error('Paddle.js failed to load. Is https://cdn.paddle.com reachable?');
+      }
+    } catch (err) {
+      console.error('Paddle init error', err);
     }
-  }
 
-  if (window.Paddle && window.Paddle.Checkout && typeof Paddle.Checkout.open === "function") {
-    initPaddle();
-  } else {
-    var s = document.createElement("script");
-    s.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
-    s.async = true;
-    s.onload = initPaddle;
-    s.onerror = function(){ if (checkoutBtn) checkoutBtn.disabled = false; console.error("Failed to load Paddle"); };
-    document.head.appendChild(s);
-  }
+    // ====== Checkout handler ======
+    function openCheckout() {
+      if (!PADDLE_PRICE_ID || PADDLE_PRICE_ID.includes('REPLACE_WITH')) {
+        alert('Please set the PADDLE_PRICE_ID in the script first.');
+        return;
+      }
 
-  window.openCheckout = function(items){
-    if (!window.Paddle || !Paddle.Checkout || typeof Paddle.Checkout.open !== "function") {
-      alert("Plačilna storitev še ni pripravljena — poskusite ponovno.");
-      return;
+      // Open overlay checkout for the single price id and quantity 1
+      Paddle.Checkout.open({
+        items: [ { priceId: PADDLE_PRICE_ID, quantity: 1 } ],
+        settings: {
+          displayMode: 'overlay',
+          theme: 'light'
+          // You can set successUrl here if you want to redirect after purchase:
+          // successUrl: 'https://your-site.com/thank-you'
+        }
+      });
     }
-    Paddle.Checkout.open({ items: items });
-  };
-})();
 
-</script>
-
+    // attach to the button
+    document.addEventListener('DOMContentLoaded', function () {
+      document.getElementById('buyBtn').addEventListener('click', openCheckout);
+    });
+  </script>
 </body>
 </html>
