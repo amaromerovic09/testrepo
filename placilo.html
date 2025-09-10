@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Plačilo</title>
+  <title>Plačilo 2</title>
   <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
   <script>
+    
     Paddle.Setup({
       token: "test_bd73c326ac973e27f2bc8fd2c29", // test token
       debug: true
     });
 
-  
+    Paddle.Environment.set('sandbox');
 
     function openCheckout() {
       Paddle.Checkout.open({
@@ -32,4 +33,5 @@
   <button onclick="openCheckout()">Pay Now</button>
 </body>
 </html>
+
 
